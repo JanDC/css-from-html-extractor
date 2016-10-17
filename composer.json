@@ -1,0 +1,23 @@
+{
+  "name": "jandc/page-specific-css",
+  "type": "library",
+  "description": "Php library which determines critical css on a per page basis.",
+  "homepage": "https://github.com/JanDC/page-specific-css",
+  "license": "ISC",
+  "authors": [
+    {
+      "name": "Jan Decavele",
+      "email": "jan.decavele@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "tijsverkoyen/css-to-inline-styles": "^2.2",
+    "twig/twig": "^1.26"
+  },
+  "autoload": {
+    "psr-4": {
+      "JanDc\\PageSpecificCss\\": "src"
+    }
+  }
+}
