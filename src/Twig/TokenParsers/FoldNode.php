@@ -1,6 +1,6 @@
 <?php
 
-namespace JanDC\PageSpecificCss\Twig\TokenParsers;
+namespace PageSpecificCss\Twig\TokenParsers;
 
 use Twig_Compiler;
 use Twig_Node;

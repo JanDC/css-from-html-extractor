@@ -1,6 +1,6 @@
 <?php
 
-namespace JanDC\PageSpecificCss;
+namespace PageSpecificCss;
 
 use TijsVerkoyen\CssToInlineStyles\Css\Processor;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;

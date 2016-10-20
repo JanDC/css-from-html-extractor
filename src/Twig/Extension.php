@@ -1,8 +1,8 @@
 <?php
 
-namespace JanDC\PageSpecificCss\Twig;
+namespace PageSpecificCss\Twig;
 
-use JanDC\PageSpecificCss\Twig\TokenParsers\FoldTokenParser;
+use PageSpecificCss\Twig\TokenParsers\FoldTokenParser;
 use Twig_Extension;
 use Twig_ExtensionInterface;
 
