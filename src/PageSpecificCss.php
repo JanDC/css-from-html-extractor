@@ -3,16 +3,16 @@
 namespace PageSpecificCss;
 
 use TijsVerkoyen\CssToInlineStyles\Css\Processor;
-use TijsVerkoyen\CssToInlineStyles\Css\Rule\Rule;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 class PageSpecificCss extends CssToInlineStyles
 {
 
-    /**
-     * @var CssStore
-     */
+    /** @var CssStore */
     private $cssStore;
+
+    /** @var Processor */
+    private $processor;
 
     /**
      * PageSpecificCss constructor.
@@ -22,7 +22,7 @@ class PageSpecificCss extends CssToInlineStyles
         parent::__construct();
 
         $this->cssStore = new CssStore();
-
+        $this->processor = new Processor(true);
     }
 
     /**
@@ -40,7 +40,6 @@ class PageSpecificCss extends CssToInlineStyles
      */
     public function extractCss($html)
     {
-        // Do something..
-        return '';
+        return $this->processor->getCssFromStyleTags($html);
     }
 }

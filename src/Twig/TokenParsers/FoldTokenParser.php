@@ -23,7 +23,7 @@ class FoldTokenParser extends Twig_TokenParser
     {
         $lineno = $token->getLine();
         $this->parser->getStream()->expect(Twig_Token::BLOCK_END_TYPE);
-        $body = $this->parser->subparse([$this, 'decideJsEnd'], true);
+        $body = $this->parser->subparse([$this, 'decideFoldEnd'], true);
         $this->parser->getStream()->expect(Twig_Token::BLOCK_END_TYPE);
         return new FoldNode($body, [], $lineno, $this->getTag());
     }
@@ -36,5 +36,10 @@ class FoldTokenParser extends Twig_TokenParser
     public function getTag()
     {
         return 'fold';
+    }
+
+    public function decideFoldEnd(Twig_Token $token)
+    {
+        return $token->test('endfold');
     }
 }

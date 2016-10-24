@@ -10,6 +10,7 @@ class CssStore
     public function addCssStyle($cssRules)
     {
         $this->styles[] = $cssRules;
+        return $this;
     }
 
     public function getStyles()
