@@ -2,6 +2,7 @@
 
 namespace PageSpecificCss\Twig\TokenParsers;
 
+use PageSpecificCss\Twig\Extension;
 use Twig_Compiler;
 use Twig_Node;
 
@@ -15,6 +16,12 @@ class FoldNode extends Twig_Node
 
     public function compile(Twig_Compiler $compiler)
     {
-        file_put_contents('test', $this->getNode('body'));
+        $compiler
+            ->addDebugInfo($this)
+            ->write("ob_start();\n")
+            ->subcompile($this->getNode('body'))
+            ->write("echo \$this->env->getExtension('".Extension::class."')->addCssToExtract(")
+            ->raw('trim(ob_get_clean())')
+            ->raw(");\n");
     }
 }
