@@ -8,9 +8,9 @@ use Twig_Node;
 class FoldNode extends Twig_Node
 {
 
-    public function __construct(array $nodes, array $attributes, $lineno, $tag)
+    public function __construct(Twig_Node $body, array $attributes, $lineno, $tag)
     {
-        parent::__construct($nodes, $attributes, $lineno, $tag);
+        parent::__construct([$body], $attributes, $lineno, $tag);
     }
 
     public function compile(Twig_Compiler $compiler)
