@@ -24,23 +24,30 @@ class PageSpecificCss extends CssToInlineStyles
     /** @var Rule[] */
     private $rules;
 
+    /** @var HtmlStore */
+    private $htmlStore;
+
     /**
      * PageSpecificCss constructor.
-     * @param string $sourceCss path to the source css
      */
-    public function __construct($sourceCss)
+    public function __construct()
     {
         parent::__construct();
 
         $this->cssStore = new CssStore();
+        $this->htmlStore = new HtmlStore();
         $this->processor = new Processor();
-        $this->rules = $this->processor->getRules(file_get_contents($sourceCss));
         $this->cssConverter = new CssSelectorConverter();
-
     }
 
-    public function getStore(){
+    public function getCssStore()
+    {
         return $this->cssStore;
+    }
+
+    public function getHtmlStore()
+    {
+        return $this->htmlStore;
     }
 
     /**
@@ -49,6 +56,23 @@ class PageSpecificCss extends CssToInlineStyles
     public function processHtmlToStore($html)
     {
         $this->cssStore->addCssStyles($this->extractCss($html));
+    }
+
+    /**
+     * @param $sourceCss
+     */
+    public function addBaseRules($sourceCss)
+    {
+        $this->rules = array_merge($this->rules, $this->processor->getRules($sourceCss));
+    }
+
+    public function buildExtractedRuleSet()
+    {
+        foreach ($this->htmlStore->getSnippets() as $htmlSnippet) {
+            $this->processHtmlToStore($htmlSnippet);
+        }
+
+        return $this->cssStore->compileStyles();
     }
 
     /**
@@ -82,8 +106,6 @@ class PageSpecificCss extends CssToInlineStyles
 
         $applicable_rules = $this->groupRulesBySelector($applicable_rules);
         return $applicable_rules;
-
-
     }
 
     /**
@@ -106,4 +128,11 @@ class PageSpecificCss extends CssToInlineStyles
 
         return $grouped;
     }
+
+    public function addHtmlToStore($rawHtml)
+    {
+        $this->htmlStore->addHtmlSnippet($rawHtml);
+    }
+
+
 }

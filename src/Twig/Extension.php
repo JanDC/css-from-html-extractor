@@ -23,6 +23,14 @@ class Extension extends Twig_Extension implements Twig_ExtensionInterface
         $this->pageSpecificCssService = new PageSpecificCss($sourceCss);
     }
 
+    /**
+     * @param $sourceCss
+     */
+    public function addBaseRules($sourceCss)
+    {
+        $this->pageSpecificCssService->addBaseRules($sourceCss);
+    }
+
     public function getTokenParsers()
     {
         return [
@@ -32,12 +40,16 @@ class Extension extends Twig_Extension implements Twig_ExtensionInterface
 
     public function addCssToExtract($rawHtml)
     {
-        $this->pageSpecificCssService->processHtmlToStore($rawHtml);
+        $this->pageSpecificCssService->addHtmlToStore($rawHtml);
         return $rawHtml;
     }
 
     public function getCriticalCss()
     {
-        return $this->pageSpecificCssService->getStore()->compileStyles();
+        return $this->pageSpecificCssService->getCssStore()->compileStyles();
+    }
+    public function buildCriticalCssFromSnippets()
+    {
+        return $this->pageSpecificCssService->buildExtractedRuleSet();
     }
 }
