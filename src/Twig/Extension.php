@@ -15,12 +15,10 @@ class Extension extends Twig_Extension implements Twig_ExtensionInterface
 
     /**
      * Extension constructor.
-     *
-     * @param string $sourceCss
      */
-    public function __construct($sourceCss)
+    public function __construct()
     {
-        $this->pageSpecificCssService = new PageSpecificCss($sourceCss);
+        $this->pageSpecificCssService = new PageSpecificCss();
     }
 
     /**
