@@ -2,8 +2,6 @@
 
 namespace PageSpecificCss;
 
-use TijsVerkoyen\CssToInlineStyles\Css\Property\Property;
-
 class HtmlStore
 {
     /** @var array Property objects, grouped by selector */
@@ -11,7 +9,7 @@ class HtmlStore
 
     public function addHtmlSnippet($htmlSnippet)
     {
-        $this->snippets = array_merge($this->snippets, $htmlSnippet);
+        $this->snippets = array_merge($this->snippets, [$htmlSnippet]);
         return $this;
     }
 
