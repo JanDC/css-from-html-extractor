@@ -15,7 +15,6 @@ composer install page-specific-css
 {% endfold %}
 ```
 
-## Usage
 ```twig
 <!-- output -->
 <head>
