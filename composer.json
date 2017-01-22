@@ -13,7 +13,7 @@
   ],
   "require": {
     "tijsverkoyen/css-to-inline-styles": "^2.2",
-    "twig/twig": "^1.26"
+    "twig/twig": "^1|^2"
   },
   "autoload": {
     "psr-4": {
