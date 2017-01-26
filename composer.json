@@ -12,8 +12,9 @@
     }
   ],
   "require": {
-    "tijsverkoyen/css-to-inline-styles": "^2.2",
-    "twig/twig": "^1|^2"
+    "php": "^5.5 || ^7",
+    "symfony/css-selector": "^2.7|~3.0",
+    "twig/twig": "^1.26"
   },
   "autoload": {
     "psr-4": {

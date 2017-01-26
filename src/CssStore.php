@@ -2,7 +2,7 @@
 
 namespace PageSpecificCss;
 
-use TijsVerkoyen\CssToInlineStyles\Css\Property\Property;
+use PageSpecificCss\Css\Property\Property;
 
 class CssStore
 {
@@ -11,7 +11,7 @@ class CssStore
 
     public function addCssStyles($cssRules)
     {
-        $this->styles = array_merge($this->styles, $cssRules);
+        $this->styles = array_merge_recursive($this->styles, $cssRules);
         return $this;
     }
 
@@ -32,25 +32,49 @@ class CssStore
 
     public function compileStyles()
     {
-        return join('', array_map(function ($properties,$key) {
-            return $this->parsePropertiesToString($key, $properties);
+        return join('', array_map(function ($properties, $key) {
+            return $this->parseMediaToString($key, $properties);
         }, $this->styles, array_keys($this->styles)));
     }
 
     /**
-     * @param string $selector
-     * @param array $properties
+     * @param string $media
+     * @param array $rules
      *
      * @return string
+     *
+     */
+    private function parseMediaToString($media, array $rules)
+    {
+        if ($media == '') {
+            return
+                join('', array_map(function ($properties, $selector) {
+                        return $this->parsePropertiesToString($selector, $properties);
+                    }, $rules, array_keys($rules))
+                );
+
+        }
+
+        return "$media { " . join('', array_map(function ($properties, $selector) {
+                    return $this->parsePropertiesToString($selector, $properties);
+                }, $rules, array_keys($rules))
+            ) . "}";
+
+
+    }
+
+    /**
+     *
+     * @return string
+     *
      */
     private function parsePropertiesToString($selector, array $properties)
     {
         return "$selector { " .
-        join('', array_map(function (Property $property) {
-                return $property->getName() . ': ' . $property->getValue() . ';';
-            }, $properties)
-        ) .
-        "}";
+            join('', array_map(function (Property $property) {
+                    return $property->getName() . ': ' . $property->getValue() . ';';
+                }, $properties)
+            ) .
+            "}";
     }
-
 }

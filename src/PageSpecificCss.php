@@ -4,12 +4,11 @@ namespace PageSpecificCss;
 
 use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\CssSelector\Exception\ExceptionInterface;
-use TijsVerkoyen\CssToInlineStyles\Css\Processor;
-use TijsVerkoyen\CssToInlineStyles\Css\Rule\Processor as RuleProcessor;
-use TijsVerkoyen\CssToInlineStyles\Css\Rule\Rule;
-use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
+use PageSpecificCss\Css\Processor;
+use PageSpecificCss\Css\Rule\Processor as RuleProcessor;
+use PageSpecificCss\Css\Rule\Rule;
 
-class PageSpecificCss extends CssToInlineStyles
+class PageSpecificCss
 {
 
     /** @var  CssSelectorConverter */
@@ -32,7 +31,9 @@ class PageSpecificCss extends CssToInlineStyles
      */
     public function __construct()
     {
-        parent::__construct();
+        if (class_exists('Symfony\Component\CssSelector\CssSelectorConverter')) {
+            $this->cssConverter = new CssSelectorConverter();
+        }
 
         $this->cssStore = new CssStore();
         $this->htmlStore = new HtmlStore();
@@ -76,6 +77,21 @@ class PageSpecificCss extends CssToInlineStyles
     }
 
     /**
+     * @param string $html
+     * @return \DOMDocument
+     */
+    protected function createDomDocumentFromHtml($html)
+    {
+        $document = new \DOMDocument('1.0', 'UTF-8');
+        $internalErrors = libxml_use_internal_errors(true);
+        $document->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
+        libxml_use_internal_errors($internalErrors);
+        $document->formatOutput = true;
+
+        return $document;
+    }
+
+    /**
      * @param $html
      *
      * @return string
@@ -91,6 +107,7 @@ class PageSpecificCss extends CssToInlineStyles
         $applicable_rules = array_filter($this->rules, function (Rule $rule) use ($xPath) {
             try {
                 $expression = $this->cssConverter->toXPath($rule->getSelector());
+
             } catch (ExceptionInterface $e) {
                 return false;
             }
@@ -119,10 +136,10 @@ class PageSpecificCss extends CssToInlineStyles
 
         foreach ($applicable_rules as $applicable_rule) {
             /** @var Rule $applicable_rule */
-            if (isset($grouped[$applicable_rule->getSelector()])) {
-                $grouped[$applicable_rule->getSelector()] = array_merge($grouped[$applicable_rule->getSelector()], $applicable_rule->getProperties());
+            if (isset($grouped[$applicable_rule->getMedia()][$applicable_rule->getSelector()])) {
+                $grouped[$applicable_rule->getMedia()][$applicable_rule->getSelector()] = array_merge($grouped[$applicable_rule->getMedia()][$applicable_rule->getSelector()], $applicable_rule->getProperties());
             } else {
-                $grouped[$applicable_rule->getSelector()] = $applicable_rule->getProperties();
+                $grouped[$applicable_rule->getMedia()][$applicable_rule->getSelector()] = $applicable_rule->getProperties();
             }
         }
 
@@ -133,6 +150,4 @@ class PageSpecificCss extends CssToInlineStyles
     {
         $this->htmlStore->addHtmlSnippet($rawHtml);
     }
-
-
 }
