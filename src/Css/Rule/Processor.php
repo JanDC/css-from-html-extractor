@@ -13,11 +13,30 @@ class Processor
      * @param string $rulesString
      * @return array
      */
-    public function splitIntoSeparateRules($rulesString)
+    public function splitIntoSeparateMediaQueries($rulesString)
     {
         $rulesString = $this->cleanup($rulesString);
 
-        return (array)explode('}', $rulesString);
+        // Intelligently break up rules, preserving mediaquery context and such
+        $queryParts = explode('@media', $rulesString);
+
+        $indexedRules = [];
+
+        $first = true;
+        foreach ($queryParts as $part) {
+            if ($first) {
+                $first = false;
+                $indexedRules[''] = (array)explode('}', $part);
+                continue;
+            }
+
+            $mediaQueryString = "@media" . substr($part, 0, strpos($part, '{'));
+            $mediaQueryRules = substr($part, strpos($part, '{') + 1);
+            $mediaQueryRules = substr($mediaQueryRules, 0, -1);
+            $indexedRules[$mediaQueryString] = (array)explode('}', $mediaQueryRules);
+        }
+
+        return $indexedRules;
     }
 
     /**
@@ -33,7 +52,6 @@ class Processor
         $string = preg_replace('/\s\s+/', ' ', $string);
 
         $string = trim($string);
-        $string = rtrim($string, '}');
 
         return $string;
     }
@@ -45,7 +63,7 @@ class Processor
      * @param int $originalOrder
      * @return array
      */
-    public function convertToObjects($rule, $originalOrder)
+    public function convertToObjects($media, $rule, $originalOrder)
     {
         $rule = $this->cleanup($rule);
 
@@ -53,19 +71,12 @@ class Processor
 
         $selectorIdentifier = 0;
         $ruleIdentifier = 1;
-        $media = '';
-
-        if (count($chunks) == 3) {
-            $selectorIdentifier++;
-            $ruleIdentifier++;
-            $media = $chunks[0];
-        }
 
         if (!isset($chunks[$ruleIdentifier])) {
-            return array();
+            return [];
         }
         $propertiesProcessor = new PropertyProcessor();
-        $rules = array();
+        $rules = [];
         $selectors = (array)explode(',', trim($chunks[$selectorIdentifier]));
         $properties = $propertiesProcessor->splitIntoSeparateProperties($chunks[$ruleIdentifier]);
 
@@ -133,12 +144,15 @@ class Processor
      * @param array $rules
      * @return Rule[]
      */
-    public function convertArrayToObjects(array $rules, array $objects = array())
+    public function convertArrayToObjects(array $mediaQueryRules, array $objects = array())
     {
-        $order = 1;
-        foreach ($rules as $rule) {
-            $objects = array_merge($objects, $this->convertToObjects($rule, $order));
-            $order++;
+
+        foreach ($mediaQueryRules as $media => $rules) {
+            $order = 1;
+            foreach ($rules as $rule) {
+                $objects = array_merge($objects, $this->convertToObjects($media, $rule, $order));
+                $order++;
+            }
         }
 
         return $objects;
