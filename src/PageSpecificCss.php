@@ -102,7 +102,6 @@ class PageSpecificCss
 
         $xPath = new \DOMXPath($document);
 
-        usort($this->rules, [RuleProcessor::class, 'sortOnSpecificity']);
 
         $applicable_rules = array_filter($this->rules, function (Rule $rule) use ($xPath) {
             try {
@@ -121,29 +120,8 @@ class PageSpecificCss
             return true;
         });
 
-        $applicable_rules = $this->groupRulesBySelector($applicable_rules);
+
         return $applicable_rules;
-    }
-
-    /**
-     * @param Rule[] $applicable_rules
-     *
-     * @return  array
-     */
-    private function groupRulesBySelector($applicable_rules)
-    {
-        $grouped = [];
-
-        foreach ($applicable_rules as $applicable_rule) {
-            /** @var Rule $applicable_rule */
-            if (isset($grouped[$applicable_rule->getMedia()][$applicable_rule->getSelector()])) {
-                $grouped[$applicable_rule->getMedia()][$applicable_rule->getSelector()] = array_merge($grouped[$applicable_rule->getMedia()][$applicable_rule->getSelector()], $applicable_rule->getProperties());
-            } else {
-                $grouped[$applicable_rule->getMedia()][$applicable_rule->getSelector()] = $applicable_rule->getProperties();
-            }
-        }
-
-        return $grouped;
     }
 
     public function addHtmlToStore($rawHtml)

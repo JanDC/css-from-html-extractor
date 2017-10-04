@@ -22,19 +22,19 @@ class Processor
 
         $indexedRules = [];
 
-        $first = true;
         foreach ($queryParts as $part) {
-            if ($first) {
-                $first = false;
-                $indexedRules[''] = (array)explode('}', $part);
+            if (strpos($part,' ') !== 0) {
+                $indexedRules[][''] = (array)explode('}', $part);
                 continue;
             }
 
-            $mediaQueryString = "@media" . substr($part, 0, strpos($part, '{'));
+            $mediaQueryString = "@media".substr($part, 0, strpos($part, '{'));
             $mediaQueryRules = substr($part, strpos($part, '{') + 1);
             $mediaQueryRules = substr($mediaQueryRules, 0, -1);
-            $indexedRules[$mediaQueryString] = (array)explode('}', $mediaQueryRules);
+
+            $indexedRules[][$mediaQueryString] = (array)explode('}', $mediaQueryRules)  ;
         }
+
 
         return $indexedRules;
     }
@@ -147,11 +147,9 @@ class Processor
     public function convertArrayToObjects(array $mediaQueryRules, array $objects = array())
     {
 
-        foreach ($mediaQueryRules as $media => $rules) {
-            $order = 1;
-            foreach ($rules as $rule) {
-                $objects = array_merge($objects, $this->convertToObjects($media, $rule, $order));
-                $order++;
+        foreach ($mediaQueryRules as $order => $ruleSet) {
+            foreach (reset($ruleSet) as $rule) {
+                $objects = array_merge($objects, $this->convertToObjects(key($ruleSet), $rule, $order));
             }
         }
 

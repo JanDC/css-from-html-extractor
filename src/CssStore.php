@@ -3,6 +3,7 @@
 namespace PageSpecificCss;
 
 use PageSpecificCss\Css\Property\Property;
+use PageSpecificCss\Css\Rule\Rule;
 
 class CssStore
 {
@@ -11,7 +12,8 @@ class CssStore
 
     public function addCssStyles($cssRules)
     {
-        $this->styles = array_merge_recursive($this->styles, $cssRules);
+        $this->styles = array_merge($this->styles, $cssRules);
+
         return $this;
     }
 
@@ -32,9 +34,23 @@ class CssStore
 
     public function compileStyles()
     {
-        return join('', array_map(function ($properties, $key) {
-            return $this->parseMediaToString($key, $properties);
-        }, $this->styles, array_keys($this->styles)));
+
+        // Structure rules in order, by media query
+        $styles = $this->prepareStylesForProcessing();
+
+
+        return join(
+            '',
+            array_map(
+                function ($styleGroup) {
+                    $media = key($styleGroup);
+                    $rules = reset($styleGroup);
+
+                    return $this->parseMediaToString($media, $rules);
+                },
+                $styles
+            )
+        );
     }
 
     /**
@@ -46,35 +62,69 @@ class CssStore
      */
     private function parseMediaToString($media, array $rules)
     {
+
         if ($media == '') {
             return
-                join('', array_map(function ($properties, $selector) {
-                        return $this->parsePropertiesToString($selector, $properties);
-                    }, $rules, array_keys($rules))
+                join(
+                    '',
+                    array_map(
+                        function ($rule) {
+                            /** @var Rule $rule */
+                            return $this->parsePropertiesToString($rule->getSelector(), $rule->getProperties());
+                        },
+                        $rules
+                    )
                 );
 
         }
 
-        return "$media { " . join('', array_map(function ($properties, $selector) {
-                    return $this->parsePropertiesToString($selector, $properties);
-                }, $rules, array_keys($rules))
-            ) . "}";
+        return "$media { ".join(
+                '',
+                array_map(
+                    function ($rule, $selector) {
+                        /** @var Rule $rule */
+                        return $this->parsePropertiesToString($rule->getSelector(), $rule->getProperties());
+                    },
+                    $rules
+                )
+            )."}";
 
 
     }
 
     /**
      *
-     * @return string
+     * @param $selector
+     * @param array $properties
      *
+     * @return string
      */
     private function parsePropertiesToString($selector, array $properties)
     {
-        return "$selector { " .
-            join('', array_map(function (Property $property) {
-                    return $property->getName() . ': ' . $property->getValue() . ';';
-                }, $properties)
-            ) .
+        return "$selector { ".
+            join(
+                '',
+                array_map(
+                    function (Property $property) {
+                        return $property->getName().': '.$property->getValue().';';
+                    },
+                    $properties
+                )
+            ).
             "}";
+    }
+
+    private function prepareStylesForProcessing()
+    {
+        // Group styles by order and media
+        $groupedStyles = [];
+
+        /** @var Rule $style */
+        foreach ($this->styles as $style) {
+            $groupedStyles[$style->getOrder()][$style->getMedia()][] = $style;
+        }
+
+
+        return $groupedStyles;
     }
 }
