@@ -2,11 +2,13 @@
 
 namespace PageSpecificCss;
 
+use Exception;
 use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\CssSelector\Exception\ExceptionInterface;
 use PageSpecificCss\Css\Processor;
 use PageSpecificCss\Css\Rule\Processor as RuleProcessor;
 use PageSpecificCss\Css\Rule\Rule;
+use Symfony\Component\CssSelector\Exception\ExpressionErrorException;
 
 class PageSpecificCss
 {
@@ -102,23 +104,43 @@ class PageSpecificCss
 
         $xPath = new \DOMXPath($document);
 
+        $applicable_rules = array_filter(
+            $this->rules,
+            function (Rule $rule) use ($xPath) {
+                try {
+                    if ($rule->getSelector() === "u-color-orange-base") {
+                        error_log("hola!!!");
+                    }
 
-        $applicable_rules = array_filter($this->rules, function (Rule $rule) use ($xPath) {
-            try {
-                $expression = $this->cssConverter->toXPath($rule->getSelector());
+                    $expression = $this->cssConverter->toXPath($rule->getSelector());
+                } catch (ExpressionErrorException $expressionErrorException) {
 
-            } catch (ExceptionInterface $e) {
-                return false;
+                    // Allow for pseudo selectors
+                    // TODO: Find a way to validate this exception without checking strings
+                    if ($expressionErrorException->getMessage() !== 'Pseudo-elements are not supported.') {
+                        return false;
+                    }
+
+                    try {
+                        $tokens = explode(':', $rule->getSelector());
+                        $expression = $this->cssConverter->toXPath((string)reset($tokens));
+                    } catch (Exception $e) {
+                        return false;
+                    }
+
+                } catch (ExceptionInterface $e) {
+                    return false;
+                }
+
+                $elements = $xPath->query($expression);
+
+                if ($elements === false || $elements->length == 0) {
+                    return false;
+                }
+
+                return true;
             }
-
-            $elements = $xPath->query($expression);
-
-            if ($elements === false || $elements->length == 0) {
-                return false;
-            }
-
-            return true;
-        });
+        );
 
 
         return $applicable_rules;

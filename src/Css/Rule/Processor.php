@@ -2,6 +2,8 @@
 
 namespace PageSpecificCss\Css\Rule;
 
+use Sabberworm\CSS\OutputFormat;
+use Sabberworm\CSS\Parser;
 use Symfony\Component\CssSelector\Node\Specificity;
 use \PageSpecificCss\Css\Property\Processor as PropertyProcessor;
 
@@ -15,26 +17,52 @@ class Processor
      */
     public function splitIntoSeparateMediaQueries($rulesString)
     {
-        $rulesString = $this->cleanup($rulesString);
+        //  $rulesString = $this->cleanup($rulesString);
 
         // Intelligently break up rules, preserving mediaquery context and such
-        $queryParts = explode('@media', $rulesString);
+
+        $mediaQuerySelector = '/@media[^{]+\{([\s\S]+?\})\s*\}/';
+        $mediaQueryMatches = [];
+        preg_match_all($mediaQuerySelector, $rulesString, $mediaQueryMatches);
+
+        $remainingRuleset = $rulesString;
+
+        $queryParts = [];
+        foreach (reset($mediaQueryMatches) as $mediaQueryMatch) {
+            $tokenisedRules = explode($mediaQueryMatch, $remainingRuleset);
+
+            $queryParts[] = reset($tokenisedRules);
+            $queryParts[] = $mediaQueryMatch;
+
+            if (count($tokenisedRules) === 2) {
+                $remainingRuleset = end($tokenisedRules);
+            }
+        }
+
 
         $indexedRules = [];
 
         foreach ($queryParts as $part) {
-            if (strpos($part,' ') !== 0) {
+
+            if (strpos($part, '@media') === FALSE) {
                 $indexedRules[][''] = (array)explode('}', $part);
                 continue;
             }
 
-            $mediaQueryString = "@media".substr($part, 0, strpos($part, '{'));
+            $mediaQueryString = substr($part, 0, strpos($part, '{'));
+
+            // No need for print css
+            if (trim($mediaQueryString) === '@media print') {
+                continue;
+            }
+
             $mediaQueryRules = substr($part, strpos($part, '{') + 1);
+
             $mediaQueryRules = substr($mediaQueryRules, 0, -1);
 
-            $indexedRules[][$mediaQueryString] = (array)explode('}', $mediaQueryRules)  ;
-        }
 
+            $indexedRules[][$mediaQueryString] = (array)explode('}', $mediaQueryRules);
+        }
 
         return $indexedRules;
     }

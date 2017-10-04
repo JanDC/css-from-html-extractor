@@ -14,6 +14,7 @@ class CssStore
     {
         $this->styles = array_merge($this->styles, $cssRules);
 
+
         return $this;
     }
 
@@ -37,6 +38,7 @@ class CssStore
 
         // Structure rules in order, by media query
         $styles = $this->prepareStylesForProcessing();
+
 
 
         return join(
@@ -81,7 +83,7 @@ class CssStore
         return "$media { ".join(
                 '',
                 array_map(
-                    function ($rule, $selector) {
+                    function ($rule) {
                         /** @var Rule $rule */
                         return $this->parsePropertiesToString($rule->getSelector(), $rule->getProperties());
                     },
