@@ -13,8 +13,6 @@ class CssStore
     public function addCssStyles($cssRules)
     {
         $this->styles = array_merge($this->styles, $cssRules);
-
-
         return $this;
     }
 
