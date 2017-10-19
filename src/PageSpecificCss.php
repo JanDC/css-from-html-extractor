@@ -2,11 +2,11 @@
 
 namespace PageSpecificCss;
 
+use DOMNodeList;
 use Exception;
 use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\CssSelector\Exception\ExceptionInterface;
 use PageSpecificCss\Css\Processor;
-use PageSpecificCss\Css\Rule\Processor as RuleProcessor;
 use PageSpecificCss\Css\Rule\Rule;
 use Symfony\Component\CssSelector\Exception\ExpressionErrorException;
 
@@ -63,9 +63,7 @@ class PageSpecificCss
 
     public function buildExtractedRuleSet()
     {
-        foreach ($this->htmlStore->getSnippets() as $htmlSnippet) {
-            $this->processHtmlToStore($htmlSnippet);
-        }
+        $this->processHtmlToStore(implode('', $this->htmlStore->getSnippets()));
 
         return $this->cssStore->compileStyles();
     }
@@ -104,14 +102,12 @@ class PageSpecificCss
 
         $xPath = new \DOMXPath($document);
 
+
         $applicable_rules = array_filter(
             $this->rules,
             function (Rule $rule) use ($xPath) {
-                try {
-                    if ($rule->getSelector() === "u-color-orange-base") {
-                        error_log("hola!!!");
-                    }
 
+                try {
                     $expression = $this->cssConverter->toXPath($rule->getSelector());
                 } catch (ExpressionErrorException $expressionErrorException) {
 
@@ -132,6 +128,7 @@ class PageSpecificCss
                     return false;
                 }
 
+                /** @var DOMNodeList $elements */
                 $elements = $xPath->query($expression);
 
                 if ($elements === false || $elements->length == 0) {

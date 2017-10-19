@@ -25,26 +25,32 @@ class Processor
         $mediaQueryMatches = [];
         preg_match_all($mediaQuerySelector, $rulesString, $mediaQueryMatches);
 
-        $remainingRuleset = $rulesString;
+        $remainingRuleSet = $rulesString;
 
         $queryParts = [];
         foreach (reset($mediaQueryMatches) as $mediaQueryMatch) {
-            $tokenisedRules = explode($mediaQueryMatch, $remainingRuleset);
+            $tokenisedRules = explode($mediaQueryMatch, $remainingRuleSet);
+
 
             $queryParts[] = reset($tokenisedRules);
             $queryParts[] = $mediaQueryMatch;
 
             if (count($tokenisedRules) === 2) {
-                $remainingRuleset = end($tokenisedRules);
+                $remainingRuleSet = end($tokenisedRules);
+            } else {
+                $remainingRuleSet = '';
             }
         }
 
+        if (!empty($remainingRuleSet)) {
+            $queryParts[] = $remainingRuleSet;
+        }
 
         $indexedRules = [];
 
         foreach ($queryParts as $part) {
 
-            if (strpos($part, '@media') === FALSE) {
+            if (strpos($part, '@media') === false) {
                 $indexedRules[][''] = (array)explode('}', $part);
                 continue;
             }
@@ -88,7 +94,7 @@ class Processor
      * Convert a rule-string into an object
      *
      * @param string $rule
-     * @param int $originalOrder
+     * @param int    $originalOrder
      * @return array
      */
     public function convertToObjects($media, $rule, $originalOrder)

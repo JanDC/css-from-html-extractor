@@ -16,8 +16,6 @@ class Processor
      */
     public function getRules($css, $existingRules = [])
     {
-
-
         $css = $this->doCleanup($css);
         $rulesProcessor = new RuleProcessor();
         $rulesByMediaQuery = $rulesProcessor->splitIntoSeparateMediaQueries($css);
