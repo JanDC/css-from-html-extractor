@@ -1,8 +1,8 @@
 <?php
 
-namespace PageSpecificCss\Css\Rule;
+namespace CSSFromHTMLExtractor\Css\Rule;
 
-use PageSpecificCss\Css\Property\Property;
+use CSSFromHTMLExtractor\Css\Property\Property;
 use Symfony\Component\CssSelector\Node\Specificity;
 
 final class Rule

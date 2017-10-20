@@ -1,6 +1,6 @@
 <?php
 
-namespace PageSpecificCss;
+namespace CSSFromHTMLExtractor;
 
 class HtmlStore
 {

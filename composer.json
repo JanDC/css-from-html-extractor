@@ -1,8 +1,8 @@
 {
-  "name": "jandc/page-specific-css",
+  "name": "jandc/css-from-html-extractor",
   "type": "library",
-  "description": "Php library which determines critical css on a per page basis.",
-  "homepage": "https://github.com/JanDC/page-specific-css",
+  "description": "Php library which determines which css is used from html snippets.",
+  "homepage": "https://github.com/JanDC/css-from-html-extractor",
   "license": "ISC",
   "authors": [
     {
@@ -18,7 +18,7 @@
   },
   "autoload": {
     "psr-4": {
-      "PageSpecificCss\\": "src/"
+      "CSSFromHTMLExtractor\\": "src/"
     }
   }
 }

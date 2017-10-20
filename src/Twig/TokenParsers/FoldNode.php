@@ -1,8 +1,8 @@
 <?php
 
-namespace PageSpecificCss\Twig\TokenParsers;
+namespace CSSFromHTMLExtractor\Twig\TokenParsers;
 
-use PageSpecificCss\Twig\Extension;
+use CSSFromHTMLExtractor\Twig\Extension;
 use Twig_Compiler;
 use Twig_Node;
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace PageSpecificCss;
+namespace CSSFromHTMLExtractor;
 
 use DOMNodeList;
 use Exception;
 use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\CssSelector\Exception\ExceptionInterface;
-use PageSpecificCss\Css\Processor;
-use PageSpecificCss\Css\Rule\Rule;
+use CSSFromHTMLExtractor\Css\Processor;
+use CSSFromHTMLExtractor\Css\Rule\Rule;
 use Symfony\Component\CssSelector\Exception\ExpressionErrorException;
 
 class PageSpecificCss

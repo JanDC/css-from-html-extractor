@@ -1,11 +1,11 @@
 <?php
 
-namespace PageSpecificCss\Css\Rule;
+namespace CSSFromHTMLExtractor\Css\Rule;
 
 use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Parser;
 use Symfony\Component\CssSelector\Node\Specificity;
-use \PageSpecificCss\Css\Property\Processor as PropertyProcessor;
+use \CSSFromHTMLExtractor\Css\Property\Processor as PropertyProcessor;
 
 class Processor
 {

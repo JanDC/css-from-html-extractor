@@ -1,9 +1,9 @@
 <?php
 
-namespace PageSpecificCss;
+namespace CSSFromHTMLExtractor;
 
-use PageSpecificCss\Css\Property\Property;
-use PageSpecificCss\Css\Rule\Rule;
+use CSSFromHTMLExtractor\Css\Property\Property;
+use CSSFromHTMLExtractor\Css\Rule\Rule;
 
 class CssStore
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace PageSpecificCss\Twig\TokenParsers;
+namespace CSSFromHTMLExtractor\Twig\TokenParsers;
 
 use Twig_Error_Syntax;
 use Twig_NodeInterface;

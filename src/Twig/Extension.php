@@ -1,9 +1,9 @@
 <?php
 
-namespace PageSpecificCss\Twig;
+namespace CSSFromHTMLExtractor\Twig;
 
-use PageSpecificCss\PageSpecificCss;
-use PageSpecificCss\Twig\TokenParsers\FoldTokenParser;
+use CSSFromHTMLExtractor\PageSpecificCss;
+use CSSFromHTMLExtractor\Twig\TokenParsers\FoldTokenParser;
 use Twig_Extension;
 use Twig_ExtensionInterface;
 

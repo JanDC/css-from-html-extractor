@@ -1,9 +1,9 @@
 <?php
 
-namespace PageSpecificCss\Css;
+namespace CSSFromHTMLExtractor\Css;
 
-use PageSpecificCss\Css\Rule\Processor as RuleProcessor;
-use PageSpecificCss\Css\Rule\Rule;
+use CSSFromHTMLExtractor\Css\Rule\Processor as RuleProcessor;
+use CSSFromHTMLExtractor\Css\Rule\Rule;
 
 class Processor
 {

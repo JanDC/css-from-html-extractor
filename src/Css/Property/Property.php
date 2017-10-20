@@ -1,6 +1,6 @@
 <?php
 
-namespace PageSpecificCss\Css\Property;
+namespace CSSFromHTMLExtractor\Css\Property;
 
 use Symfony\Component\CssSelector\Node\Specificity;
 
