@@ -3,6 +3,7 @@
 namespace CSSFromHTMLExtractor\Twig\TokenParsers;
 
 use Twig_Error_Syntax;
+use Twig_Node;
 use Twig_NodeInterface;
 use Twig_Token;
 use Twig_TokenParser;
@@ -15,7 +16,7 @@ class FoldTokenParser extends Twig_TokenParser
      *
      * @param Twig_Token $token A Twig_Token instance
      *
-     * @return Twig_NodeInterface A Twig_NodeInterface instance
+     * @return Twig_Node A Twig_NodeInterface instance
      *
      * @throws Twig_Error_Syntax
      */
