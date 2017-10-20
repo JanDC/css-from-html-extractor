@@ -1,11 +1,47 @@
-# page-specific-css
-Page-specific-css is a library with extracts css selectors from html snippets and matches them with css rules to extract the used rules.
+# CSS from HTML extractor
 
-This effectively enables you to create critical css.
+Php library which determines which css is used from html snippets.
+It is used in jandc/critical-css to automatically and dynamically determine critical css on a per page basis.
 
-The bulk of it's code is based on, and expanded from, Thijs Verkoyen's inline css library.
 
+### Installation
+``
+composer require jandc/css-from-html-extractor
+``
 ### Usage
-This library is used as a twig post processing module in JanDC/critical-css-processor. But you could of course make your own implementation.
 
-To get a complete instruction in how to use this library (in conjunction with a twig wrapper) please refer to https://github.com/JanDC/page-specific-css-silex for the reference implementation or the critical css processor for a more generic implementation. 
+#### With Twig
+###### Register Extension
+```
+use CSSFromHTMLExtractor\Twig\Extension as ExtractorExtension;
+
+$extension = new ExtractorExtension()
+$extension->addBaseRules('path/to/css');
+
+/** @var Twig_Environment $twig */
+$twig->addExtension($extension);
+```
+###### Mark the regions of your templates with the provided blocks
+```
+{% fold %}
+<div class="my-class">
+...
+</div>
+{% endfold %}
+```
+
+###### Retrieve the resulting css from the extension
+
+``` 
+$extension = $twigEnvironment->getExtension(ExtractorExtension::class);
+$extension->buildCriticalCssFromSnippets();
+```
+
+
+#### Handling raw HTML
+```
+$cssFromHTMLExtractor = new CssFromHTMLExtractor();
+$cssFromHTMLExtractor->addBaseRules('path/to/css');
+$cssFromHTMLExtractor->addHtmlToStore($rawHtml);
+$extractedCss = $cssFromHTMLExtractor->buildExtractedRuleSet();
+```

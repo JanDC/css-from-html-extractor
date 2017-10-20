@@ -2,7 +2,7 @@
 
 namespace CSSFromHTMLExtractor\Twig;
 
-use CSSFromHTMLExtractor\PageSpecificCss;
+use CSSFromHTMLExtractor\CssFromHTMLExtractor;
 use CSSFromHTMLExtractor\Twig\TokenParsers\FoldTokenParser;
 use Twig_Extension;
 use Twig_ExtensionInterface;
@@ -10,7 +10,7 @@ use Twig_ExtensionInterface;
 class Extension extends Twig_Extension implements Twig_ExtensionInterface
 {
 
-    /** @var PageSpecificCss */
+    /** @var CssFromHTMLExtractor */
     private $pageSpecificCssService;
 
     /**
@@ -18,7 +18,7 @@ class Extension extends Twig_Extension implements Twig_ExtensionInterface
      */
     public function __construct()
     {
-        $this->pageSpecificCssService = new PageSpecificCss();
+        $this->pageSpecificCssService = new CssFromHTMLExtractor();
     }
 
     /**
@@ -46,6 +46,7 @@ class Extension extends Twig_Extension implements Twig_ExtensionInterface
     {
         return $this->pageSpecificCssService->getCssStore()->compileStyles();
     }
+
     public function buildCriticalCssFromSnippets()
     {
         return $this->pageSpecificCssService->buildExtractedRuleSet();

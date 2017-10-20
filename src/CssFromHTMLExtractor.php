@@ -10,7 +10,7 @@ use CSSFromHTMLExtractor\Css\Processor;
 use CSSFromHTMLExtractor\Css\Rule\Rule;
 use Symfony\Component\CssSelector\Exception\ExpressionErrorException;
 
-class PageSpecificCss
+class CssFromHTMLExtractor
 {
 
     /** @var  CssSelectorConverter */
@@ -29,7 +29,7 @@ class PageSpecificCss
     private $htmlStore;
 
     /**
-     * PageSpecificCss constructor.
+     * CssFromHTMLExtractor constructor.
      */
     public function __construct()
     {
