@@ -12,7 +12,7 @@ composer require jandc/css-from-html-extractor
 
 #### With Twig
 ###### Register Extension
-```
+```php
 use CSSFromHTMLExtractor\Twig\Extension as ExtractorExtension;
 
 $extension = new ExtractorExtension()
@@ -22,7 +22,7 @@ $extension->addBaseRules('path/to/css');
 $twig->addExtension($extension);
 ```
 ###### Mark the regions of your templates with the provided blocks
-```
+```twig
 {% fold %}
 <div class="my-class">
 ...
@@ -32,7 +32,7 @@ $twig->addExtension($extension);
 
 ###### Retrieve the resulting css from the extension
 
-``` 
+```php
 $extension = $twigEnvironment->getExtension(ExtractorExtension::class);
 $extension->buildCriticalCssFromSnippets();
 ```
