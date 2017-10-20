@@ -39,7 +39,7 @@ $extension->buildCriticalCssFromSnippets();
 
 
 #### Handling raw HTML
-```
+```php
 $cssFromHTMLExtractor = new CssFromHTMLExtractor();
 $cssFromHTMLExtractor->addBaseRules('path/to/css');
 $cssFromHTMLExtractor->addHtmlToStore($rawHtml);
