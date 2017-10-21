@@ -10,6 +10,9 @@ class CssStore
     /** @var array Property objects, grouped by selector */
     private $styles = [];
 
+    /** @var  string|null */
+    private $charset;
+
     public function addCssStyles($cssRules)
     {
         $this->styles = array_merge($this->styles, $cssRules);
@@ -38,19 +41,20 @@ class CssStore
         $styles = $this->prepareStylesForProcessing();
 
 
+        $prefix = is_null($this->charset) ? '' : $this->charset;
 
-        return join(
-            '',
-            array_map(
-                function ($styleGroup) {
-                    $media = key($styleGroup);
-                    $rules = reset($styleGroup);
+        return $prefix . join(
+                '',
+                array_map(
+                    function ($styleGroup) {
+                        $media = key($styleGroup);
+                        $rules = reset($styleGroup);
 
-                    return $this->parseMediaToString($media, $rules);
-                },
-                $styles
-            )
-        );
+                        return $this->parseMediaToString($media, $rules);
+                    },
+                    $styles
+                )
+            );
     }
 
     /**
@@ -68,8 +72,7 @@ class CssStore
                 join(
                     '',
                     array_map(
-                        function ($rule) {
-                            /** @var Rule $rule */
+                        function (Rule $rule) {
                             return $this->parsePropertiesToString($rule->getSelector(), $rule->getProperties());
                         },
                         $rules
@@ -78,16 +81,15 @@ class CssStore
 
         }
 
-        return "$media { ".join(
+        return "$media { " . join(
                 '',
                 array_map(
-                    function ($rule) {
-                        /** @var Rule $rule */
+                    function (Rule $rule) {
                         return $this->parsePropertiesToString($rule->getSelector(), $rule->getProperties());
                     },
                     $rules
                 )
-            )."}";
+            ) . "}";
 
 
     }
@@ -101,16 +103,18 @@ class CssStore
      */
     private function parsePropertiesToString($selector, array $properties)
     {
-        return "$selector { ".
+        $selector = mb_convert_encoding($selector, 'unicode');
+
+        return "$selector { " .
             join(
                 '',
                 array_map(
                     function (Property $property) {
-                        return $property->getName().': '.$property->getValue().';';
+                        return mb_convert_encoding($property->getName(), 'unicode') . ': ' . mb_convert_encoding($property->getValue(), 'unicode') . ';';
                     },
                     $properties
                 )
-            ).
+            ) .
             "}";
     }
 
@@ -126,5 +130,11 @@ class CssStore
 
 
         return $groupedStyles;
+    }
+
+    public function setCharset($charset)
+    {
+        $this->charset = $charset;
+
     }
 }

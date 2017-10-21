@@ -59,6 +59,7 @@ class CssFromHTMLExtractor
     public function addBaseRules($sourceCss)
     {
         $this->rules = $this->processor->getRules($sourceCss, $this->rules);
+        $this->getCssStore()->setCharset($this->processor->getCharset($sourceCss));
     }
 
     public function buildExtractedRuleSet()

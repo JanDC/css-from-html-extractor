@@ -11,7 +11,7 @@ class Processor
      * Get the rules from a given CSS-string
      *
      * @param string $css
-     * @param array  $existingRules
+     * @param array $existingRules
      * @return Rule[]
      */
     public function getRules($css, $existingRules = [])
@@ -21,6 +21,17 @@ class Processor
         $rulesByMediaQuery = $rulesProcessor->splitIntoSeparateMediaQueries($css);
 
         return $rulesProcessor->convertArrayToObjects($rulesByMediaQuery, $existingRules);
+    }
+
+    public function getCharset($css)
+    {
+        preg_match_all('/@charset "[^"]++";/', $css, $matches);
+
+        if ($charset = reset($matches)) {
+            return reset($charset);
+        }
+
+        return null;
     }
 
     /**
