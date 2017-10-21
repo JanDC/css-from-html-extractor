@@ -103,14 +103,12 @@ class CssStore
      */
     private function parsePropertiesToString($selector, array $properties)
     {
-        $selector = mb_convert_encoding($selector, 'unicode');
-
         return "$selector { " .
             join(
                 '',
                 array_map(
                     function (Property $property) {
-                        return mb_convert_encoding($property->getName(), 'unicode') . ': ' . mb_convert_encoding($property->getValue(), 'unicode') . ';';
+                        return $property->getName() . ': ' . $property->getValue() . ';';
                     },
                     $properties
                 )
