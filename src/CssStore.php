@@ -10,12 +10,13 @@ class CssStore
     /** @var array Property objects, grouped by selector */
     private $styles = [];
 
-    /** @var  string|null */
+    /** @var string|null */
     private $charset;
 
     public function addCssStyles($cssRules)
     {
         $this->styles = array_merge($this->styles, $cssRules);
+
         return $this;
     }
 
@@ -36,10 +37,8 @@ class CssStore
 
     public function compileStyles()
     {
-
         // Structure rules in order, by media query
         $styles = $this->prepareStylesForProcessing();
-
 
         $prefix = is_null($this->charset) ? '' : $this->charset;
 
@@ -66,7 +65,6 @@ class CssStore
      */
     private function parseMediaToString($media, array $rules)
     {
-
         if ($media == '') {
             return
                 join(
@@ -90,13 +88,11 @@ class CssStore
                     $rules
                 )
             ) . "}";
-
-
     }
 
     /**
      *
-     * @param $selector
+     * @param string $selector
      * @param array $properties
      *
      * @return string
@@ -126,13 +122,11 @@ class CssStore
             $groupedStyles[$style->getOrder()][$style->getMedia()][] = $style;
         }
 
-
         return $groupedStyles;
     }
 
     public function setCharset($charset)
     {
         $this->charset = $charset;
-
     }
 }

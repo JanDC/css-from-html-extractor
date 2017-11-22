@@ -40,7 +40,7 @@ class Processor
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return mixed|string
      */
     private function cleanup($string)

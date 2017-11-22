@@ -13,12 +13,11 @@ class Processor
      * Split a string into seperate rules
      *
      * @param string $rulesString
+     *
      * @return array
      */
     public function splitIntoSeparateMediaQueries($rulesString)
     {
-        //  $rulesString = $this->cleanup($rulesString);
-
         // Intelligently break up rules, preserving mediaquery context and such
 
         $mediaQuerySelector = '/@media[^{]+\{([\s\S]+?\})\s*\}/';
@@ -30,7 +29,6 @@ class Processor
         $queryParts = [];
         foreach (reset($mediaQueryMatches) as $mediaQueryMatch) {
             $tokenisedRules = explode($mediaQueryMatch, $remainingRuleSet);
-
 
             $queryParts[] = reset($tokenisedRules);
             $queryParts[] = $mediaQueryMatch;
@@ -49,7 +47,6 @@ class Processor
         $indexedRules = [];
 
         foreach ($queryParts as $part) {
-
             if (strpos($part, '@media') === false) {
                 $indexedRules[][''] = (array)explode('}', $part);
                 continue;
@@ -93,6 +90,7 @@ class Processor
     /**
      * Convert a rule-string into an object
      *
+     * @param string $media
      * @param string $rule
      * @param int    $originalOrder
      * @return array
@@ -175,12 +173,13 @@ class Processor
     }
 
     /**
-     * @param array $rules
+     * @param array $mediaQueryRules
+     * @param array $objects
+     *
      * @return Rule[]
      */
     public function convertArrayToObjects(array $mediaQueryRules, array $objects = array())
     {
-
         foreach ($mediaQueryRules as $order => $ruleSet) {
             foreach (reset($ruleSet) as $rule) {
                 $objects = array_merge($objects, $this->convertToObjects(key($ruleSet), $rule, $order));
