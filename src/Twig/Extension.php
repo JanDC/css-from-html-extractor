@@ -21,7 +21,7 @@ class Extension extends Twig_Extension
     }
 
     /**
-     * @param $sourceCss
+     * @param string $sourceCss
      */
     public function addBaseRules($sourceCss)
     {
@@ -38,6 +38,7 @@ class Extension extends Twig_Extension
     public function addCssToExtract($rawHtml)
     {
         $this->pageSpecificCssService->addHtmlToStore($rawHtml);
+
         return $rawHtml;
     }
 

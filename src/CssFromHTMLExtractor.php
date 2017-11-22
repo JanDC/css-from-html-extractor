@@ -13,7 +13,7 @@ use Symfony\Component\CssSelector\Exception\ExpressionErrorException;
 class CssFromHTMLExtractor
 {
 
-    /** @var  CssSelectorConverter */
+    /** @var CssSelectorConverter */
     protected $cssConverter;
 
     /** @var CssStore */
@@ -54,7 +54,7 @@ class CssFromHTMLExtractor
     }
 
     /**
-     * @param $sourceCss
+     * @param string $sourceCss
      */
     public function addBaseRules($sourceCss)
     {
@@ -79,6 +79,7 @@ class CssFromHTMLExtractor
 
     /**
      * @param string $html
+     *
      * @return \DOMDocument
      */
     protected function createDomDocumentFromHtml($html)
@@ -93,7 +94,7 @@ class CssFromHTMLExtractor
     }
 
     /**
-     * @param $html
+     * @param string $html
      *
      * @return string
      */
@@ -132,7 +133,7 @@ class CssFromHTMLExtractor
                 /** @var DOMNodeList $elements */
                 $elements = $xPath->query($expression);
 
-                if ($elements === false || $elements->length == 0) {
+                if ($elements->length === 0) {
                     return false;
                 }
 
