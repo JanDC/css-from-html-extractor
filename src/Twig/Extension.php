@@ -51,4 +51,9 @@ class Extension extends Twig_Extension implements Twig_ExtensionInterface
     {
         return $this->pageSpecificCssService->buildExtractedRuleSet();
     }
+
+    public function getName()
+    {
+        return 'css-form-html-extractor';
+    }
 }
