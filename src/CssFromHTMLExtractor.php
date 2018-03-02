@@ -5,6 +5,7 @@ namespace CSSFromHTMLExtractor;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
 use DOMNodeList;
+use DOMXPath;
 use Exception;
 use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\CssSelector\Exception\ExceptionInterface;
@@ -125,33 +126,12 @@ class CssFromHTMLExtractor
     {
         $document = $this->createDomDocumentFromHtml($html);
 
-        $xPath = new \DOMXPath($document);
-
+        $xPath = new DOMXPath($document);
 
         $applicable_rules = array_filter(
             $this->rules,
             function (Rule $rule) use ($xPath) {
-
-                try {
-                    $expression = $this->cssConverter->toXPath($rule->getSelector());
-                } catch (ExpressionErrorException $expressionErrorException) {
-
-                    // Allow for pseudo selectors
-                    // TODO: Find a way to validate this exception without checking strings
-                    if ($expressionErrorException->getMessage() !== 'Pseudo-elements are not supported.') {
-                        return false;
-                    }
-
-                    try {
-                        $tokens = explode(':', $rule->getSelector());
-                        $expression = $this->cssConverter->toXPath((string)reset($tokens));
-                    } catch (Exception $e) {
-                        return false;
-                    }
-
-                } catch (ExceptionInterface $e) {
-                    return false;
-                }
+                $expression = $this->buildExpressionForSelector($rule->getSelector());
 
                 /** @var DOMNodeList $elements */
                 $elements = $xPath->query($expression);
@@ -191,5 +171,40 @@ class CssFromHTMLExtractor
         $this->cssStore->purge();
 
         return $this;
+    }
+
+    private function buildExpressionForSelector(string $selector)
+    {
+
+        if ($expression = $this->resultCache->fetch($selector)) {
+            return $expression;
+        }
+
+
+        try {
+            $expression = $this->cssConverter->toXPath($selector);
+        } catch (ExpressionErrorException $expressionErrorException) {
+
+            // Allow for pseudo selectors
+            // TODO: Find a way to validate this exception without checking strings
+            if ($expressionErrorException->getMessage() !== 'Pseudo-elements are not supported.') {
+                return false;
+            }
+
+            try {
+                $tokens = explode(':', $selector);
+                $expression = $this->cssConverter->toXPath((string)reset($tokens));
+            } catch (Exception $e) {
+                return false;
+            }
+
+        } catch (ExceptionInterface $e) {
+            return false;
+        }
+
+
+        $this->resultCache->save($selector, $expression);
+
+        return $expression;
     }
 }
