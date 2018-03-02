@@ -53,4 +53,15 @@ class Extension extends Twig_Extension implements Twig_ExtensionInterface
     {
         return $this->pageSpecificCssService->buildExtractedRuleSet();
     }
+
+    public function purgeHtmlStore()
+    {
+        $this->pageSpecificCssService->purgeHtmlStore();
+
+    }
+
+    public function purgeCssStore()
+    {
+        $this->pageSpecificCssService->purgeCssStore();
+    }
 }

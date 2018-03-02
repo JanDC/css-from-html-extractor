@@ -172,4 +172,24 @@ class CssFromHTMLExtractor
     {
         $this->htmlStore->addHtmlSnippet($rawHtml);
     }
+
+    /**
+     * @return $this
+     */
+    public function purgeHtmlStore()
+    {
+        $this->htmlStore->purge();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function purgeCssStore()
+    {
+        $this->cssStore->purge();
+
+        return $this;
+    }
 }

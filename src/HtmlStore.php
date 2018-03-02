@@ -17,4 +17,14 @@ class HtmlStore
     {
         return $this->snippets;
     }
+
+    /**
+     * @return $this
+     */
+    public function purge()
+    {
+        $this->snippets = [];
+
+        return $this;
+    }
 }

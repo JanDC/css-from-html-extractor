@@ -26,6 +26,16 @@ class CssStore
     }
 
     /**
+     * @return $this
+     */
+    public function purge()
+    {
+        $this->styles = [];
+
+        return $this;
+    }
+
+    /**
      * @param string $path
      *
      * @return bool whether the dumping was successful
