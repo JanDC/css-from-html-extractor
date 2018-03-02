@@ -4,6 +4,7 @@ namespace CSSFromHTMLExtractor\Twig;
 
 use CSSFromHTMLExtractor\CssFromHTMLExtractor;
 use CSSFromHTMLExtractor\Twig\TokenParsers\FoldTokenParser;
+use Doctrine\Common\Cache\Cache;
 use Twig_Extension;
 use Twig_ExtensionInterface;
 
@@ -14,11 +15,11 @@ class Extension extends Twig_Extension implements Twig_ExtensionInterface
     private $pageSpecificCssService;
 
     /**
-     * Extension constructor.
+     * @param Cache|null $resultSetCache
      */
-    public function __construct()
+    public function __construct(Cache $resultSetCache = null)
     {
-        $this->pageSpecificCssService = new CssFromHTMLExtractor();
+        $this->pageSpecificCssService = new CssFromHTMLExtractor($resultSetCache);
     }
 
     /**

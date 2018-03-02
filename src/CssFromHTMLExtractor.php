@@ -2,6 +2,8 @@
 
 namespace CSSFromHTMLExtractor;
 
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\Cache;
 use DOMNodeList;
 use Exception;
 use Symfony\Component\CssSelector\CssSelectorConverter;
@@ -28,10 +30,14 @@ class CssFromHTMLExtractor
     /** @var HtmlStore */
     private $htmlStore;
 
+    /** @var Cache */
+    private $resultCache;
+
     /**
      * CssFromHTMLExtractor constructor.
+     * @param Cache|null $resultCache
      */
-    public function __construct()
+    public function __construct(Cache $resultCache = null)
     {
         if (class_exists('Symfony\Component\CssSelector\CssSelectorConverter')) {
             $this->cssConverter = new CssSelectorConverter();
@@ -41,6 +47,8 @@ class CssFromHTMLExtractor
         $this->htmlStore = new HtmlStore();
         $this->processor = new Processor();
         $this->cssConverter = new CssSelectorConverter();
+
+        $this->resultCache = is_null($resultCache) ? new ArrayCache() : $resultCache;
     }
 
     public function getCssStore()
@@ -58,8 +66,21 @@ class CssFromHTMLExtractor
      */
     public function addBaseRules($sourceCss)
     {
-        $this->rules = $this->processor->getRules($sourceCss, $this->rules);
-        $this->getCssStore()->setCharset($this->processor->getCharset($sourceCss));
+        $identifier = md5($sourceCss);
+        if ($this->resultCache->contains($identifier)) {
+            list($rules, $charset) = $this->resultCache->fetch($identifier);
+            $this->rules = $rules;
+            $this->getCssStore()->setCharset($charset);
+
+            return;
+        }
+
+        $results = [$this->processor->getRules($sourceCss, $this->rules), $this->processor->getCharset($sourceCss)];
+
+        $this->rules = $results[0];
+        $this->getCssStore()->setCharset($results[1]);
+
+        $this->resultCache->save($identifier, $results);
     }
 
     public function buildExtractedRuleSet()
