@@ -34,6 +34,12 @@ class CssFromHTMLExtractor
     /** @var Cache */
     private $resultCache;
 
+    /** @var array */
+    private $loadedfiles = [];
+
+    /** @var array */
+    private $cachedRules = [];
+
     /**
      * CssFromHTMLExtractor constructor.
      * @param Cache|null $resultCache
@@ -50,6 +56,7 @@ class CssFromHTMLExtractor
         $this->cssConverter = new CssSelectorConverter();
 
         $this->resultCache = is_null($resultCache) ? new ArrayCache() : $resultCache;
+        $this->cachedRules = (array)$resultCache->fetch('cachedRules');
     }
 
     public function getCssStore()
@@ -68,6 +75,8 @@ class CssFromHTMLExtractor
     public function addBaseRules($sourceCss)
     {
         $identifier = md5($sourceCss);
+
+        $this->loadedfiles[] = $identifier;
         if ($this->resultCache->contains($identifier)) {
             list($rules, $charset) = $this->resultCache->fetch($identifier);
             $this->rules = $rules;
@@ -128,9 +137,15 @@ class CssFromHTMLExtractor
 
         $xPath = new DOMXPath($document);
 
+        $cssIdentifier = join('-', $this->loadedfiles);
+
         $applicable_rules = array_filter(
             $this->rules,
-            function (Rule $rule) use ($xPath) {
+            function (Rule $rule) use ($xPath, $cssIdentifier) {
+                if (isset($this->cachedRules[$cssIdentifier][$rule->getSelector()])) {
+                    return true;
+                }
+
                 $expression = $this->buildExpressionForSelector($rule->getSelector());
 
                 /** @var DOMNodeList $elements */
@@ -140,10 +155,14 @@ class CssFromHTMLExtractor
                     return false;
                 }
 
+                $this->cachedRules[$cssIdentifier][$rule->getSelector()] = true;
+
                 return true;
             }
         );
 
+
+        $this->resultCache->save('cachedRules', $this->cachedRules);
 
         return $applicable_rules;
     }
@@ -173,6 +192,11 @@ class CssFromHTMLExtractor
         return $this;
     }
 
+    /**
+     * @param string $selector
+     *
+     * @return false|string
+     */
     private function buildExpressionForSelector(string $selector)
     {
 
