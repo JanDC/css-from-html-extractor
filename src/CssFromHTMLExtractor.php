@@ -138,12 +138,13 @@ class CssFromHTMLExtractor
         $xPath = new DOMXPath($document);
 
         $cssIdentifier = join('-', $this->loadedfiles);
+        $htmlIdentifier = md5($html);
 
         $applicable_rules = array_filter(
             $this->rules,
-            function (Rule $rule) use ($xPath, $cssIdentifier) {
-                if (isset($this->cachedRules[$cssIdentifier][$rule->getSelector()])) {
-                    return true;
+            function (Rule $rule) use ($xPath, $cssIdentifier, $htmlIdentifier) {
+                if (isset($this->cachedRules[$cssIdentifier][$htmlIdentifier][$rule->getSelector()])) {
+                    return $this->cachedRules[$cssIdentifier][$htmlIdentifier][$rule->getSelector()];
                 }
 
                 $expression = $this->buildExpressionForSelector($rule->getSelector());
@@ -152,10 +153,11 @@ class CssFromHTMLExtractor
                 $elements = $xPath->query($expression);
 
                 if ($elements->length === 0) {
+                    $this->cachedRules[$cssIdentifier][$htmlIdentifier][$rule->getSelector()] = false;
                     return false;
                 }
 
-                $this->cachedRules[$cssIdentifier][$rule->getSelector()] = true;
+                $this->cachedRules[$cssIdentifier][$htmlIdentifier][$rule->getSelector()] = true;
 
                 return true;
             }
@@ -203,7 +205,6 @@ class CssFromHTMLExtractor
         if ($expression = $this->resultCache->fetch($selector)) {
             return $expression;
         }
-
 
         try {
             $expression = $this->cssConverter->toXPath($selector);
