@@ -149,6 +149,10 @@ class CssFromHTMLExtractor
 
                 $expression = $this->buildExpressionForSelector($rule->getSelector());
 
+                if (!$expression) {
+                    return false;
+                }
+
                 /** @var DOMNodeList $elements */
                 $elements = $xPath->query($expression);
 
