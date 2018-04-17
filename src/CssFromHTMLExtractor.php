@@ -56,7 +56,7 @@ class CssFromHTMLExtractor
         $this->cssConverter = new CssSelectorConverter();
 
         $this->resultCache = is_null($resultCache) ? new ArrayCache() : $resultCache;
-        $this->cachedRules = (array)$resultCache->fetch('cachedRules');
+        $this->cachedRules = (array)$this->resultCache->fetch('cachedRules');
     }
 
     public function getCssStore()
