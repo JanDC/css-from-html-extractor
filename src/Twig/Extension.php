@@ -44,6 +44,11 @@ class Extension extends Twig_Extension implements Twig_ExtensionInterface
         return $rawHtml;
     }
 
+    public function hasCriticalHtml()
+    {
+        return count($this->pageSpecificCssService->getHtmlStore()->getSnippets()) > 0;
+    }
+
     public function getCriticalCss()
     {
         return $this->pageSpecificCssService->getCssStore()->compileStyles();
